@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TZ Travel - Pemesanan Tiket Toyota Hiace</title>
+    <style>
+        /* CSS Dasar */
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }
+        
+        /* HEADER MODERN DENGAN ANIMASI MOBIL */
+        header { 
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); 
+            color: white; text-align: center; padding: 40px 0 0 0; 
+            border-bottom: 4px solid #2563eb; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative; overflow: hidden; 
+        }
+        header h1 {
+            margin: 0; font-size: 32px; letter-spacing: 3px; font-weight: 800; text-transform: uppercase;
+            background: linear-gradient(to right, #ffffff, #93c5fd);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        header p { margin: 12px 0 25px 0; font-size: 14px; color: #93c5fd; font-style: italic; letter-spacing: 1px; }
+
+        /* JALAN RAYA & ANIMASI MOBIL TRAVEL */
+        .jalan-raya { width: 100%; height: 30px; background-color: #1e293b; position: relative; border-top: 1px solid #334155; }
+        .jalan-raya::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; border-top: 2px dashed #94a3b8; transform: translateY(-50%); }
+        .mobil-travel { width: 55px; height: 22px; background-color: #38bdf8; border-radius: 5px 12px 3px 3px; position: absolute; bottom: 6px; left: -70px; animation: berjalan 10s linear infinite; }
+        .mobil-travel::before { content: ""; position: absolute; top: 3px; left: 28px; width: 16px; height: 8px; background-color: #0f172a; border-radius: 0 4px 0 0; }
+        .roda { width: 9px; height: 9px; background-color: #475569; border: 2px solid #cbd5e1; border-radius: 50%; position: absolute; bottom: -4px; animation: berputar 1s linear infinite; }
+        .roda-depan { right: 8px; }
+        .roda-belakang { left: 8px; }
+        @keyframes berjalan { 0% { left: -70px; } 100% { left: 100%; } }
+        @keyframes berputar { 100% { transform: rotate(360deg); } }
+
+        /* ANIMASI TEKS NEON BERJALAN */
+        .marquee-container {
+            background-color: #020617; padding: 12px 0; overflow: hidden; white-space: nowrap; border-bottom: 2px solid #1e293b; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .marquee-text {
+            display: inline-block; color: #ffffff; font-size: 15px; font-weight: bold; text-transform: uppercase;
+            text-shadow: 0 0 5px #38bdf8, 0 0 10px #38bdf8, 0 0 20px #2563eb, 0 0 40px #1d4ed8;
+            animation: teksBerjalan 18s linear infinite;
+        }
+        @keyframes teksBerjalan { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        /* Wadah Konten Utama */
+        .container { max-width: 800px; margin: 30px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .scroll-jadwal-box { max-height: 550px; overflow-y: auto; padding-right: 15px; margin-top: 15px; }
+
+        /* FITUR BARU: DESAIN GRID KARTU EKSKLUSIF */
+        #daftar-jadwal { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 18px; 
+        }
+        .jadwal-card { 
+            background: linear-gradient(145deg, #ffffff, #f8fafc); 
+            border: none; 
+            border-top: 5px solid #2563eb; /* Garis aksen elegan di atas */
+            border-radius: 12px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; /* Menyusun isi kartu dari atas ke bawah */
+            justify-content: space-between; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .jadwal-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15); 
+            border-top: 5px solid #38bdf8; 
+        }
+        .card-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+        .card-icon { background-color: #eff6ff; font-size: 24px; padding: 12px; border-radius: 12px; box-shadow: inset 0 0 0 1px #bfdbfe; }
+        .card-title h3 { margin: 0 0 6px 0; font-size: 16px; color: #0f172a; line-height: 1.4; }
+        .card-status { font-size: 11px; color: #10b981; font-weight: bold; background: #d1fae5; padding: 4px 10px; border-radius: 12px;}
+        
+        .card-info { background-color: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .info-label { font-size: 11px; color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .info-value { font-weight: bold; color: #334155; }
+        .info-price { font-weight: 800; color: #2563eb; font-size: 16px; }
+        
+        .btn-pesan-full { width: 100%; background-color: #2563eb; color: white; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-pesan-full:hover { background-color: #1d4ed8; transform: scale(1.02); }
+
+        /* Tombol-tombol Standar Lainnya */
+        .btn-submit, .btn-batal, .btn-beranda, .btn-gmail { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: background-color 0.2s;}
+        .btn-submit, .btn-beranda { background-color: #2563eb; color: white; }
+        .btn-submit:hover, .btn-beranda:hover { background-color: #1d4ed8; }
+        .btn-batal { background-color: #dc2626; color: white; margin-right: 10px; }
+        .btn-batal:hover { background-color: #b91c1c; }
+        .btn-gmail { background-color: #ea4335; color: white; margin-top: 15px; display: inline-block; text-decoration: none; font-size: 14px; margin-right: 10px; }
+        .btn-gmail:hover { background-color: #c5221f; }
+
+        .hidden { display: none; }
+
+        /* CSS untuk Formulir */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        /* CSS UNTUK DENAH/MAP KURSI TOYOTA HIACE */
+        .area-pilih-kursi { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .denah-bus { max-width: 280px; margin: 15px auto; background-color: #e2e8f0; padding: 15px; border-radius: 10px; border: 3px solid #94a3b8; }
+        .baris-kursi { display: flex; justify-content: space-between; margin-bottom: 10px; gap: 5px; }
+        .gang-bus { width: 35px; }
+        .box-kursi { width: 45px; height: 45px; background-color: #22c55e; color: white; text-align: center; line-height: 45px; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .box-kursi:hover { transform: scale(1.05); }
+        .box-kursi.terpilih { background-color: #2563eb; }
+        .box-kursi.terisi { background-color: #94a3b8; color: #cbd5e1; cursor: not-allowed; }
+        .petunjuk-warna { display: flex; justify-content: center; gap: 15px; font-size: 12px; margin-top: 10px; }
+        .label-warna { display: flex; align-items: center; gap: 5px; }
+        .mini-kotak { width: 14px; height: 14px; border-radius: 3px; }
+
+        /* CSS Kotak Total Harga */
+        .total-harga-box { background-color: #e0f2fe; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #bae6fd; }
+        .total-harga-box h3 { margin: 0; color: #0369a1; text-align: right; }
+
+        /* CSS untuk Halaman Sukses / Struk Pembelian */
+        .sukses-box { text-align: center; padding: 20px; }
+        .ikon-sukses { color: #22c55e; font-size: 48px; margin-bottom: 10px; }
+        .struk-nota { border: 2px dashed #ccc; background-color: #fafafa; padding: 20px; border-radius: 5px; text-align: left; max-width: 500px; margin: 20px auto; }
+        .struk-baris { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dotted #eee; padding-bottom: 5px; }
+        .struk-baris strong { color: #555; }
+        .struk-total { font-size: 18px; color: #1e3a8a; border-top: 2px solid #333; padding-top: 10px; margin-top: 15px; }
+        .barcode-container { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ccc; }
+        .barcode-svg { width: 220px; height: 60px; }
+
+        /* CSS Footer Elegan */
+        footer { background-color: #0f172a; color: #cbd5e1; margin-top: 50px; padding: 40px 0 20px 0; font-size: 14px; }
+        .footer-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; padding: 0 20px; flex-wrap: wrap; }
+        .footer-section { flex: 1; min-width: 220px; margin-bottom: 20px; }
+        .footer-section h3 { color: #ffffff; margin-top: 0; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #2563eb; display: inline-block; padding-bottom: 5px; }
+        .footer-section p { margin: 6px 0; line-height: 1.6; }
+        .hotline-number { font-size: 16px; font-weight: bold; color: #38bdf8; background-color: #1e293b; padding: 8px 12px; border-radius: 5px; display: inline-block; margin-top: 5px !important; }
+        .footer-bottom { text-align: center; border-top: 1px solid #334155; padding-top: 20px; margin-top: 20px; font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TZ Travel</h1>
+        <p>— Melangkah Nyaman, Tiba dengan Aman —</p>
+        <div class="jalan-raya">
+            <div class="mobil-travel">
+                <div class="roda roda-depan"></div>
+                <div class="roda roda-belakang"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="marquee-container">
+        <div class="marquee-text">
+            ✨ Informasi: Pelayanan Carter dan Pickup Airport Soekarno-Hatta dapat diakses melalui nomor hotline WhatsApp kami: +6289677222133 ✨
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- BAGIAN 1: DAFTAR JADWAL -->
+        <div id="halaman-jadwal">
+            <h2>Jadwal Keberangkatan Tersedia</h2>
+            <div class="scroll-jadwal-box">
+                <!-- Data HTML kartu akan dicetak di dalam sini oleh JavaScript -->
+                <div id="daftar-jadwal"></div>
+            </div>
+        </div>
+
+        <!-- BAGIAN 2: FORMULIR PEMESANAN -->
+        <div id="halaman-formulir" class="hidden">
+            <h2>Formulir Data Penumpang</h2>
+            <form id="form-penumpang" onsubmit="prosesPesanan(event)">
+                <div class="form-group">
+                    <label for="rute-terpilih">Rute Perjalanan:</label>
+                    <input type="text" id="rute-terpilih" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="armada-info">Jenis Kendaraan:</label>
+                    <input type="text" id="armada-info" value="Toyota Hiace Commuter (Kapasitas 14 Kursi)" readonly style="background-color: #f1f5f9; color: #475569;">
+                </div>
+                <div class="form-group">
+                    <label for="tanggal-berangkat">Tanggal Keberangkatan:</label>
+                    <input type="date" id="tanggal-berangkat" required>
+                </div>
+                <div class="form-group">
+                    <label for="nama-penumpang">Nama Lengkap:</label>
+                    <input type="text" id="nama-penumpang" placeholder="Masukkan nama sesuai KTP" required>
+                </div>
+                <div class="form-group">
+                    <label for="no-hp">Nomor HP/WhatsApp:</label>
+                    <input type="tel" id="no-hp" placeholder="Contoh: 08123456789" required>
+                </div>
+
+                <!-- MAP SEAT SELECTION TOYOTA HIACE -->
+                <div class="area-pilih-kursi">
+                    <label style="font-weight: bold; color: #333;">Silakan Pilih Nomor Kursi Toyota Hiace Anda:</label>
+                    <div class="denah-bus">
+                        <div class="baris-kursi">
+                            <div class="box-kursi terisi">Supir</div>
+                            <div class="gang-bus"></div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '01')">01</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '02')">02</div>
+                        </div>
+                        <div class="baris-kursi">
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '03')">03</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '04')">04</div>
+                            <div class="gang-bus"></div>
+                            <div class="box-kursi terisi">05</div>
+                        </div>
+                        <div class="baris-kursi">
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '06')">06</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '07')">07</div>
+                            <div class="gang-bus"></div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '08')">08</div>
+                        </div>
+                        <div class="baris-kursi">
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '09')">09</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '10')">10</div>
+                            <div class="gang-bus"></div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '11')">11</div>
+                        </div>
+                        <div class="baris-kursi">
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '12')">12</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '13')">13</div>
+                            <div class="box-kursi" onclick="pilihKursiElemen(this, '14')">14</div>
+                        </div>
+                    </div>
+                    <div class="petunjuk-warna">
+                        <div class="label-warna"><div class="mini-kotak" style="background-color: #22c55e;"></div> Tersedia</div>
+                        <div class="label-warna"><div class="mini-kotak" style="background-color: #2563eb;"></div> Pilihan Anda</div>
+                        <div class="label-warna"><div class="mini-kotak" style="background-color: #94a3b8;"></div> Sudah Terisi</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="jumlah-tiket">Jumlah Tiket:</label>
+                    <input type="number" id="jumlah-tiket" readonly value="0" required>
+                </div>
+
+                <div class="total-harga-box">
+                    <h3 id="teks-total-harga">Total: Rp 0</h3>
+                </div>
+                <div>
+                    <button type="button" class="btn-batal" onclick="batalPesan()">Batal</button>
+                    <button type="submit" class="btn-submit">Konfirmasi Pesanan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- BAGIAN 3: HALAMAN SUKSES TAMPILAN NOTA -->
+        <div id="halaman-sukses" class="hidden">
+            <div class="sukses-box">
+                <div class="ikon-sukses">✔</div>
+                <h2>Pemesanan Berhasil!</h2>
+                <p>Silakan tunjukkan E-Tiket ini ke petugas loket TZ Travel:</p>
+                
+                <div class="struk-nota">
+                    <div class="struk-baris" style="background-color: #fef08a; padding: 5px; border-radius: 3px;">
+                        <strong>KODE BOOKING:</strong>
+                        <span id="nota-kode" style="font-weight: bold; color: #1e3a8a; font-family: monospace; font-size: 16px;">-</span>
+                    </div>
+                    <div class="struk-baris" style="background-color: #f0fdf4; padding: 5px; border-radius: 3px; margin-top: 5px;">
+                        <strong>NOTIFIKASI GMAIL:</strong>
+                        <span id="nota-email-status" style="font-weight: bold;">Memproses...</span>
+                    </div>
+                    <div class="struk-baris" style="margin-top: 10px;">
+                        <strong>Nama Penumpang:</strong>
+                        <span id="nota-nama">-</span>
+                    </div>
+                    <div class="struk-baris">
+                        <strong>Rute Tujuan:</strong>
+                        <span id="nota-rute">-</span>
+                    </div>
+                    <div class="struk-baris">
+                        <strong>Armada / Kendaraan:</strong>
+                        <span>Toyota Hiace (14 Kursi)</span>
+                    </div>
+                    <div class="struk-baris">
+                        <strong>Tanggal Perjalanan:</strong>
+                        <span id="nota-tanggal">-</span>
+                    </div>
+                    <div class="struk-baris">
+                        <strong>Nomor Kursi:</strong>
+                        <span id="nota-kursi" style="font-weight: bold; color: #2563eb;">-</span>
+                    </div>
+                    <div class="struk-baris">
+                        <strong>Jumlah Tiket:</strong>
+                        <span id="nota-jumlah">-</span>
+                    </div>
+                    <div class="struk-baris struk-total">
+                        <strong>Total Pembayaran:</strong>
+                        <span id="nota-total">Rp 0</span>
+                    </div>
+
+                    <div class="barcode-container">
+                        <svg class="barcode-svg" viewBox="0 0 100 30">
+                            <rect x="0" y="0" width="2" height="30" fill="black"/>
+                            <rect x="3" y="0" width="1" height="30" fill="black"/>
+                            <rect x="6" y="0" width="3" height="30" fill="black"/>
+                            <rect x="11" y="0" width="1" height="30" fill="black"/>
+                            <rect x="14" y="0" width="4" height="30" fill="black"/>
+                            <rect x="20" y="0" width="2" height="30" fill="black"/>
+                            <rect x="24" y="0" width="1" height="30" fill="black"/>
+                            <rect x="27" y="0" width="3" height="30" fill="black"/>
+                            <rect x="32" y="0" width="2" height="30" fill="black"/>
+                            <rect x="36" y="0" width="4" height="30" fill="black"/>
+                            <rect x="42" y="0" width="1" height="30" fill="black"/>
+                            <rect x="45" y="0" width="2" height="30" fill="black"/>
+                            <rect x="49" y="0" width="3" height="30" fill="black"/>
+                            <rect x="54" y="0" width="1" height="30" fill="black"/>
+                            <rect x="57" y="0" width="4" height="30" fill="black"/>
+                            <rect x="63" y="0" width="2" height="30" fill="black"/>
+                            <rect x="67" y="0" width="1" height="30" fill="black"/>
+                            <rect x="70" y="0" width="3" height="30" fill="black"/>
+                            <rect x="75" y="0" width="2" height="30" fill="black"/>
+                            <rect x="79" y="0" width="4" height="30" fill="black"/>
+                            <rect x="85" y="0" width="1" height="30" fill="black"/>
+                            <rect x="88" y="0" width="2" height="30" fill="black"/>
+                            <rect x="92" y="0" width="3" height="30" fill="black"/>
+                            <rect x="97" y="0" width="3" height="30" fill="black"/>
+                        </svg>
+                        <p id="nota-barcode-teks" style="font-family: monospace; font-size: 11px; margin: 5px 0 0 0; letter-spacing: 4px; color: #475569; font-weight: bold;"></p>
+                    </div>
+                </div>
+
+                <a id="btn-buka-gmail" class="btn-gmail" target="_blank">Kirim Manual via Gmail App</a>
+                <button class="btn-beranda" onclick="kembaliKeBeranda()">Kembali ke Beranda</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>TZ Travel</h3>
+                <p>Kami berkomitmen menyediakan layanan transportasi darat antar kota yang aman, tepat waktu, dan mengutamakan kenyamanan armada terbaik.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Layanan Pelanggan</h3>
+                <p>Punya pertanyaan atau kendala? Hubungi hotline 24 jam kami:</p>
+                <p class="hotline-number">📞 +6289677222133</p>
+            </div>
+            <div class="footer-section">
+                <h3>Home Office</h3>
+                <p>Jl. Kusuma Nusantara No.18<br>Palasari Cibiru, Kota Bandung<br>Indonesia</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 TZ Travel. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+    </footer>
+
+    <script>
+        const jadwalTravel = [
+            { id: 1, rute: "Jakarta - Semarang (via Pemalang)", waktu: "07:30 WIB", harga: 380000 },
+            { id: 2, rute: "Semarang (via Pemalang) - Jakarta", waktu: "19:00 WIB", harga: 380000 },
+            { id: 3, rute: "Jakarta - Pekalongan", waktu: "08:00 WIB", harga: 280000 },
+            { id: 4, rute: "Pekalongan - Jakarta", waktu: "19:30 WIB", harga: 280000 },
+            { id: 5, rute: "Jakarta - Batang", waktu: "08:15 WIB", harga: 290000 },
+            { id: 6, rute: "Batang - Jakarta", waktu: "19:45 WIB", harga: 290000 },
+            { id: 7, rute: "Jakarta - Yogyakarta (Kebumen)", waktu: "08:00 WIB", harga: 390000 },
+            { id: 8, rute: "Yogyakarta (Kebumen) - Jakarta", waktu: "18:30 WIB", harga: 390000 },
+            { id: 9, rute: "Jakarta - Bandung", waktu: "09:00 WIB", harga: 150000 },
+            { id: 10, rute: "Bandung - Jakarta", waktu: "15:00 WIB", harga: 150000 },
+            { id: 11, rute: "Jakarta - Pangandaran (Tasikmalaya, Ciamis, Banjar)", waktu: "06:00 WIB", harga: 270000 },
+            { id: 12, rute: "Pangandaran (Tasikmalaya, Ciamis, Banjar) - Jakarta", waktu: "14:30 WIB", harga: 270000 }
+        ];
+
+        let hargaAktif = 0;
+        let listKursiTerpilih = [];
+
+        function formatRupiah(angka) {
+            return "Rp " + angka.toLocaleString('id-ID');
+        }
+
+        function aturTanggalMinimal() {
+            const hariIni = new Date().toISOString().split('T')[0];
+            document.getElementById("tanggal-berangkat").setAttribute('min', hariIni);
+        }
+
+        function buatKodeBookingAcak() {
+            const daftarKarakter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let kodeHasil = "TZ-";
+            for (let i = 0; i < 6; i++) {
+                const indeksAcak = Math.floor(Math.random() * daftarKarakter.length);
+                kodeHasil += daftarKarakter.charAt(indeksAcak);
+            }
+            return kodeHasil;
+        }
+
+        // FITUR BARU: Pembuatan Kode HTML Kartu yang Jauh Lebih Modern
+        function tampilkanJadwal() {
+            const wadahJadwal = document.getElementById("daftar-jadwal");
+            wadahJadwal.innerHTML = ""; 
+
+            jadwalTravel.forEach(jadwal => {
+                const card = document.createElement("div");
+                card.className = "jadwal-card";
+                card.innerHTML = `
+                    <div style="width: 100%;">
+                        <div class="card-header">
+                            <div class="card-icon">🚐</div>
+                            <div class="card-title">
+                                <h3>${jadwal.rute}</h3>
+                                <span class="card-status">Tersedia</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-info">
+                            <div>
+                                <div class="info-label">Keberangkatan</div>
+                                <div class="info-value">🕒 ${jadwal.waktu}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="info-label">Harga Tiket</div>
+                                <div class="info-price">${formatRupiah(jadwal.harga)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-pesan-full" onclick="bukaFormulir('${jadwal.rute}', ${jadwal.harga})">Pesan Tiket</button>
+                `;
+                wadahJadwal.appendChild(card);
+            });
+        }
+
+        function bukaFormulir(rutePilihan, hargaRute) {
+            document.getElementById("halaman-jadwal").classList.add("hidden");
+            document.getElementById("halaman-formulir").classList.remove("hidden");
+            document.getElementById("rute-terpilih").value = rutePilihan;
+            
+            listKursiTerpilih = [];
+            document.getElementById("jumlah-tiket").value = 0;
+            const elemenKursi = document.querySelectorAll('.box-kursi');
+            elemenKursi.forEach(kursi => {
+                if(kursi.classList.contains('terpilih')) {
+                    kursi.classList.remove('terpilih');
+                }
+            });
+
+            hargaAktif = hargaRute;
+            hitungTotalHarga();
+            aturTanggalMinimal();
+        }
+
+        function pilihKursiElemen(elemen, nomorKursi) {
+            if (elemen.classList.contains('terisi')) return;
+
+            if (elemen.classList.contains('terpilih')) {
+                elemen.classList.remove('terpilih');
+                listKursiTerpilih = listKursiTerpilih.filter(item => item !== nomorKursi);
+            } else {
+                elemen.classList.add('terpilih');
+                listKursiTerpilih.push(nomorKursi);
+            }
+
+            listKursiTerpilih.sort();
+            document.getElementById("jumlah-tiket").value = listKursiTerpilih.length;
+            hitungTotalHarga();
+        }
+
+        function hitungTotalHarga() {
+            const jumlah = document.getElementById("jumlah-tiket").value;
+            const total = hargaAktif * jumlah;
+            document.getElementById("teks-total-harga").innerText = "Total: " + formatRupiah(total);
+        }
+
+        function resetForm() {
+            document.getElementById("form-penumpang").reset();
+            listKursiTerpilih = [];
+        }
+
+        function batalPesan() {
+            document.getElementById("halaman-formulir").classList.add("hidden");
+            document.getElementById("halaman-jadwal").classList.remove("hidden");
+            resetForm();
+        }
+
+        function prosesPesanan(event) {
+            event.preventDefault(); 
+            
+            if (listKursiTerpilih.length === 0) {
+                alert("⚠️ Maaf, Anda belum memilih nomor kursi armada Hiace!");
+                return;
+            }
+
+            const nama = document.getElementById("nama-penumpang").value;
+            const rute = document.getElementById("rute-terpilih").value;
+            const tanggal = document.getElementById("tanggal-berangkat").value;
+            const jumlah = document.getElementById("jumlah-tiket").value;
+            const total = formatRupiah(hargaAktif * jumlah);
+            const nomorKursiTeks = listKursiTerpilih.join(", ");
+
+            const kodeBookingUnik = buatKodeBookingAcak();
+
+            document.getElementById("nota-kode").innerText = kodeBookingUnik;
+            document.getElementById("nota-nama").innerText = nama;
+            document.getElementById("nota-rute").innerText = rute;
+            document.getElementById("nota-tanggal").innerText = tanggal;
+            document.getElementById("nota-kursi").innerText = nomorKursiTeks;
+            document.getElementById("nota-jumlah").innerText = jumlah + " Tiket";
+            document.getElementById("nota-total").innerText = total;
+            document.getElementById("nota-barcode-teks").innerText = kodeBookingUnik;
+
+            const emailStatus = document.getElementById("nota-email-status");
+            emailStatus.innerText = "🔄 Mengirim ke bomctasikmalaya@gmail.com...";
+            emailStatus.style.color = "#d97706";
+
+            setTimeout(() => {
+                emailStatus.innerText = "📧 Terkirim Otomatis!";
+                emailStatus.style.color = "#16a34a";
+            }, 2000);
+
+            const emailTujuan = "bomctasikmalaya@gmail.com";
+            const subjekEmail = encodeURIComponent("E-Tiket TZ Travel (Hiace) - " + kodeBookingUnik);
+            const isiEmail = encodeURIComponent(
+                "Yth. Manajemen BOMC Tasikmalaya,\n\n" +
+                "Berikut adalah data pemesanan E-Tiket TZ Travel (Armada Toyota Hiace) baru:\n\n" +
+                "- Kode Booking: " + kodeBookingUnik + "\n" +
+                "- Nama Penumpang: " + nama + "\n" +
+                "- Rute: " + rute + "\n" +
+                "- Tanggal: " + tanggal + "\n" +
+                "- Kursi Hiace: " + nomorKursiTeks + "\n" +
+                "- Total Bayar: " + total + "\n\n" +
+                "Mohon segera divalidasi ke dalam manifes. Terima kasih!"
+            );
+
+            document.getElementById("btn-buka-gmail").href = "mailto:" + emailTujuan + "?subject=" + subjekEmail + "&body=" + isiEmail;
+
+            document.getElementById("halaman-formulir").classList.add("hidden");
+            document.getElementById("halaman-sukses").classList.remove("hidden");
+        }
+
+        function kembaliKeBeranda() {
+            document.getElementById("halaman-sukses").classList.add("hidden");
+            document.getElementById("halaman-jadwal").classList.remove("hidden");
+            resetForm();
+        }
+
+        tampilkanJadwal();
+    </script>
+</body>
+</html>
